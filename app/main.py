@@ -1,5 +1,9 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+
+from contextlib import asynccontextmanager
+
+
 from sqlalchemy.orm import Session
 from app.config import settings
 from app.database import get_db
@@ -30,10 +34,17 @@ app = FastAPI(
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_origins_list,
     allow_credentials=True,
-    allow_methods=["*"],
     allow_headers=["*"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:5174",
+        "http://127.0.0.1:3000",
+    ],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 )
 
 # Health check
@@ -71,6 +82,14 @@ def test_timezone(db: Session = Depends(get_db)):
         "jakarta_time": str(result[3]),
         "timezone_setting": timezone_setting[0] if timezone_setting else "unknown"
     }
+
+
+# Authentication Router
+app.include_router(
+    auth.router,
+    prefix="/api/v1/auth",
+    tags=["🔐 Authentication"]
+)
 
 # Include routers
 app.include_router(auth.router, prefix=f"{settings.API_V1_PREFIX}/auth", tags=["Authentication"])
