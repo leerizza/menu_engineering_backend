@@ -15,7 +15,8 @@ from app.api.v1 import (
     stock_requests,
     stock_transfers,
     menus,
-    sales
+    sales,
+    analytics
 )
 
 # Create FastAPI app
@@ -84,6 +85,7 @@ app.include_router(stock_requests.router, prefix=f"{settings.API_V1_PREFIX}/stoc
 app.include_router(stock_transfers.router, prefix=f"{settings.API_V1_PREFIX}/stock-transfers", tags=["Stock Transfers"])
 app.include_router(menus.router, prefix=f"{settings.API_V1_PREFIX}/menus", tags=["Menus & Recipes"])
 app.include_router(sales.router, prefix=f"{settings.API_V1_PREFIX}/sales", tags=["Sales & POS"])
+app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["Analytics"])
 
 if __name__ == "__main__":
     import uvicorn
